@@ -1,7 +1,7 @@
 package com.exercise.Controller;
 
-import com.exercise.Model.MyCustomer;
-import com.exercise.Model.MyCustomerService;
+import com.exercise.Entity.MyCustomer;
+import com.exercise.Service.MyCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

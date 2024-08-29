@@ -1,5 +1,6 @@
-package com.exercise.Model;
+package com.exercise.Repository;
 
+import com.exercise.Entity.MyUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

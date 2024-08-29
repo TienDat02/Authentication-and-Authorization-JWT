@@ -161,6 +161,22 @@
         .form-group select {
             height: 100px;
         }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group label {
+            width: 80px; /* Adjust width as needed */
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            transform: scale(1.5); /* Make checkboxes larger */
+            margin-left: 10px;
+        }
 
         .submit-button {
             background-color: #3498db;
@@ -229,16 +245,29 @@
                 <input type="password" id="password" name="password" required>
             </div>
             <div class="form-group">
-                <label for="roles">Roles:</label>
-                <label><input type="checkbox" name="roles" value="USER"> USER</label>
-                <label><input type="checkbox" name="roles" value="ADMIN"> ADMIN</label>
+                <label>Roles:</label>
+                <div class="checkbox-group">
+                    <label>USER</label><input type="checkbox" name="roles" value="USER">
+                </div>
+                <div class="checkbox-group">
+                    <label>ADMIN</label><input type="checkbox" name="roles" value="ADMIN">
+                </div>
             </div>
+
             <div class="form-group">
-                <label for="permissions">Permissions:</label>
-                <label><input type="checkbox" name="permissions" value="Create"> Create</label>
-                <label><input type="checkbox" name="permissions" value="Read"> Read</label>
-                <label><input type="checkbox" name="permissions" value="Update"> Update</label>
-                <label><input type="checkbox" name="permissions" value="Delete"> Delete</label>
+                <label>Permissions:</label>
+                <div class="checkbox-group">
+                    <label>Read</label><input type="checkbox" name="permissions" value="Read" checked disabled>
+                </div>
+                <div class="checkbox-group">
+                    <label>Create</label><input type="checkbox" name="permissions" value="Create">
+                </div>
+                <div class="checkbox-group">
+                    <label>Update</label><input type="checkbox" name="permissions" value="Update">
+                </div>
+                <div class="checkbox-group">
+                    <label>Delete</label><input type="checkbox" name="permissions" value="Delete">
+                </div>
             </div>
             <button type="submit" class="submit-button">Add User</button>
         </form>
@@ -260,16 +289,28 @@
                 <input type="text" id="editUsername" name="username" required>
             </div>
             <div class="form-group">
-                <label for="editRoles">Roles:</label>
-                <label><input type="checkbox" name="editRoles" value="USER"> USER</label>
-                <label><input type="checkbox" name="editRoles" value="ADMIN"> ADMIN</label>
+                <label>Roles:</label>
+                <div class="checkbox-group">
+                    <label>USER</label><input type="checkbox" name="editRoles" value="USER">
+                </div>
+                <div class="checkbox-group">
+                    <label>ADMIN</label><input type="checkbox" name="editRoles" value="ADMIN">
+                </div>
             </div>
             <div class="form-group">
-                <label for="editPermissions">Permissions:</label>
-                <label><input type="checkbox" name="editPermissions" value="Create"> Create</label>
-                <label><input type="checkbox" name="editPermissions" value="Read"> Read</label>
-                <label><input type="checkbox" name="editPermissions" value="Update"> Update</label>
-                <label><input type="checkbox" name="editPermissions" value="Delete"> Delete</label>
+                <label>Permissions:</label>
+                <div class="checkbox-group">
+                    <label>Read</label><input type="checkbox" name="editPermissions" value="Read" checked disabled>
+                </div>
+                <div class="checkbox-group">
+                    <label>Create</label><input type="checkbox" name="editPermissions" value="Create">
+                </div>
+                <div class="checkbox-group">
+                    <label>Update</label><input type="checkbox" name="editPermissions" value="Update">
+                </div>
+                <div class="checkbox-group">
+                    <label>Delete</label><input type="checkbox" name="editPermissions" value="Delete">
+                </div>
             </div>
             <button type="submit" class="submit-button">Save Changes</button>
         </form>
@@ -289,7 +330,9 @@
                     });
                 } else if (this.value === 'ADMIN' && !this.checked) {
                     document.querySelectorAll('input[name="permissions"]').forEach(permissionCheckbox => {
-                        permissionCheckbox.checked = false;
+                        if (permissionCheckbox.value !== 'Read') {
+                            permissionCheckbox.checked = false;
+                        }
                     });
                 }
             });

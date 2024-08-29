@@ -1,12 +1,14 @@
 package com.exercise.Controller;
 
-import com.exercise.Model.MyUser;
-import com.exercise.Model.MyUserRepository;
+import com.exercise.Entity.MyUser;
+import com.exercise.Repository.MyUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Set;
 
 @Controller
 public class RegistrationController {
@@ -18,7 +20,6 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
-                               @RequestParam String email,
                                @RequestParam String password,
                                @RequestParam String confirmPassword) {
         // Basic validation
@@ -34,6 +35,7 @@ public class RegistrationController {
         // Create and save the new user
         MyUser newUser = new MyUser(username, passwordEncoder.encode(password));
         newUser.addRole("USER");
+        newUser.setPermissions(Set.of("Read"));
         myUserRepository.save(newUser);
 
         return "redirect:/login?registered";

@@ -1,5 +1,7 @@
-package com.exercise.Model;
+package com.exercise.Service;
 
+import com.exercise.Entity.MyCustomer;
+import com.exercise.Repository.MyCustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

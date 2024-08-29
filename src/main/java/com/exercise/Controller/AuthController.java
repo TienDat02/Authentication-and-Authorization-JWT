@@ -1,6 +1,6 @@
 package com.exercise.Controller;
 
-import com.exercise.Model.MyUserDetailService;
+import com.exercise.Service.MyUserDetailService;
 import com.exercise.Webtoken.JwtService;
 import com.exercise.Webtoken.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;

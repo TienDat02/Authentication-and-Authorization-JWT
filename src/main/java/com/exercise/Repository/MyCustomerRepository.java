@@ -1,5 +1,7 @@
-package com.exercise.Model;
+package com.exercise.Repository;
 
+import com.exercise.Entity.Gender;
+import com.exercise.Entity.MyCustomer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

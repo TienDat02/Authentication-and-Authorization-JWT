@@ -1,7 +1,7 @@
 package com.exercise.Controller;
 
-import com.exercise.Model.MyUser;
-import com.exercise.Model.MyUserRepository;
+import com.exercise.Entity.MyUser;
+import com.exercise.Repository.MyUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,6 +1,6 @@
 package com.exercise.Configuration;
 
-import com.exercise.Model.MyUserDetailService;
+import com.exercise.Service.MyUserDetailService;
 import com.exercise.Webtoken.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

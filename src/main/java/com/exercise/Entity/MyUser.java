@@ -1,4 +1,4 @@
-package com.exercise.Model;
+package com.exercise.Entity;
 
 import jakarta.persistence.*;
 import java.util.HashSet;

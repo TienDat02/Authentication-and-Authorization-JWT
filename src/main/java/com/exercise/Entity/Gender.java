@@ -1,4 +1,4 @@
-package com.exercise.Model;
+package com.exercise.Entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

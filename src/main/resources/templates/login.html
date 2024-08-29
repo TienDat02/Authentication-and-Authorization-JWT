@@ -34,9 +34,10 @@
         .login-container input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 3px;
+            box-sizing: border-box;
         }
         .login-container input[type="submit"] {
             width: 100%;
@@ -46,10 +47,28 @@
             border-radius: 3px;
             color: #fff;
             font-weight: bold;
+            margin-top: 10px;
             cursor: pointer;
+            font-size: 16px;
         }
         .login-container input[type="submit"]:hover {
             background-color: #218838;
+        }
+        .login-container .sign-up-button {
+            width: 100%;
+            padding: 10px; /* Đặt padding giống như nút Login */
+            background-color: #007bff; /* Màu xanh dương */
+            border: none;
+            border-radius: 3px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px; /* Khoảng cách phía trên nút Sign Up */
+            font-size: 16px; /* Kích thước font giống như nút Login */
+        }
+
+        .login-container .sign-up-button:hover {
+            background-color: #0056b3; /* Màu xanh dương đậm hơn khi hover */
         }
     </style>
 </head>
@@ -62,6 +81,7 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <input type="submit" value="Login">
+        <input type="button" value="Sign Up" class="sign-up-button" onclick="window.location.href='/register';">
     </form>
 </div>
 </body>
