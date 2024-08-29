@@ -17,6 +17,11 @@ public class MyUser {
     @Column(name = "role")
     private Set<String> roles = new HashSet<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<String> permissions = new HashSet<>();
+
     public MyUser() {
     }
     public MyUser(String username, String password) {
@@ -52,5 +57,20 @@ public class MyUser {
     }
     public void removeRole(String role) {
         this.roles.remove(role);
+    }
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
+    public void addPermission(String permission) {
+        this.permissions.add(permission);
+    }
+    public void removePermission(String permission) {
+        this.permissions.remove(permission);
+    }
+    public boolean hasPermission(String permission) {
+        return this.permissions.contains(permission);
     }
 }

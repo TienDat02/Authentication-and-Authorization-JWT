@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +26,30 @@ public class MyUserDetailService implements UserDetailsService {
         Optional<MyUser> myUser = myUserRepository.findByUsername(username);
         if(myUser.isPresent()){
             var userObj = myUser.get();
-            List<GrantedAuthority> authorities = userObj.getRoles().stream()
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            
+            // Add role-based authorities
+            authorities.addAll(userObj.getRoles().stream()
                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
+            
+            // Add permission-based authorities
+            authorities.addAll(userObj.getPermissions().stream()
+                    .map(permission -> new SimpleGrantedAuthority("PERMISSION_" + permission.toUpperCase()))
+                    .collect(Collectors.toList()));
+            
+            // Add null checks and default values
+            String userUsername = (userObj.getUsername() != null && !userObj.getUsername().isEmpty()) ? userObj.getUsername() : "defaultUsername";
+            String userPassword = (userObj.getPassword() != null && !userObj.getPassword().isEmpty()) ? userObj.getPassword() : "defaultPassword";
+            
+            // Ensure authorities is not empty
+            if (authorities.isEmpty()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            }
+            
             return new org.springframework.security.core.userdetails.User(
-                    userObj.getUsername(),
-                    userObj.getPassword(),
+                    userUsername,
+                    userPassword,
                     authorities
             );
         } else {

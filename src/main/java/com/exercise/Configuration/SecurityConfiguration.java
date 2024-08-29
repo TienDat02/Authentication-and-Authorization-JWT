@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     @Autowired
@@ -37,17 +39,25 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/home", "/register/**", "/login", "/authenticate").permitAll();
-            registry.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN");
-            registry.requestMatchers("/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
-            registry.anyRequest().authenticated();
+                .authorizeHttpRequests(re -> {
+            re.requestMatchers("/home", "/register/**", "/login", "/authenticate").permitAll();
+            re.requestMatchers("/admin/**").hasRole("ADMIN");
+            re.requestMatchers("/user/customer-management").hasAuthority("PERMISSION_READ");
+            re.requestMatchers("/user/create-customer").hasAuthority("PERMISSION_CREATE");
+            re.requestMatchers("/user/**").hasRole("USER");
+            re.anyRequest().authenticated();
         })
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer.loginPage("/login")
                             .successHandler(new AuthenticationSuccessHandler())
                             .permitAll();
                 })
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
