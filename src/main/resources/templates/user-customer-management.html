@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Panel</title>
@@ -81,7 +80,10 @@
             gap: 10px;
         }
 
-
+        .actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
 
         /* Modal */
         .modal {
@@ -97,81 +99,13 @@
             background-color: rgba(0,0,0,0.4);
             padding-top: 60px;
         }
-        .form-group {
-            display: flex; /* Use flexbox for alignment */
-            flex-direction: column; /* Stack label and input vertically */
-            margin-bottom: 15px; /* Space between form groups */
-        }
 
-        .form-group label {
-            font-weight: bold; /* Bold label for clarity */
-            margin-bottom: 5px; /* Space between label and input */
-            color: #34495e; /* Darker color for labels */
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 8px; /* More padding for input fields */
-            font-size: 14px; /* Consistent font size */
-            border: 1px solid #ccc; /* Border for inputs */
-            border-radius: 4px; /* Rounded corners */
-            outline: none; /* Remove default outline */
-            transition: border-color 0.3s ease; /* Smooth transition */
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #3498db; /* Highlight input on focus */
-        }
-
-        .modal-content h2 {
-            text-align: center; /* Center title */
-            margin-bottom: 20px; /* Space below the title */
-            color: #2c3e50; /* Darker title color */
-        }
         .modal-content {
             background-color: #fefefe;
             margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 60%; /* Reduced width for a more compact look */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-        }
-        .modal-content button[type="submit"],
-        .modal-content button[type="button"] {
-            width: 100px; /* Fixed width for buttons */
-            padding: 10px; /* Padding for buttons */
-            margin-right: 10px; /* Space between buttons */
-            border: none; /* Remove border */
-            border-radius: 5px; /* Rounded corners */
-            cursor: pointer; /* Pointer cursor */
-            transition: background-color 0.3s ease; /* Smooth transition */
-        }
-
-        .modal-content button[type="submit"] {
-            background-color: #2ecc71; /* Green background for submit */
-            color: white; /* White text */
-        }
-
-        .modal-content button[type="button"] {
-            background-color: #e74c3c; /* Red background for cancel */
-            color: white; /* White text */
-        }
-
-        .modal-content button:hover {
-            background-color: #27ae60; /* Darker green on hover */
-        }
-
-        .modal-content button[type="button"]:hover {
-            background-color: #c0392b; /* Darker red on hover */
-        }
-
-        /* Center the buttons horizontally */
-        .modal-content .form-buttons {
-            display: flex; /* Flexbox for alignment */
-            justify-content: center; /* Center alignment */
-            margin-top: 20px; /* Space above buttons */
+            width: 80%;
         }
 
         .close {
@@ -186,59 +120,6 @@
             color: black;
             text-decoration: none;
             cursor: pointer;
-        }
-        /* Button Styles */
-        .crud-buttons {
-            display: flex;
-            flex-direction: column; /* Stacks buttons vertically */
-            gap: 5px; /* Space between buttons */
-            align-items: center; /* Center alignment */
-        }
-
-        .crud-buttons button {
-            width: 80px; /* Smaller fixed width for both buttons */
-            background-color: #3498db; /* Blue background */
-            color: white; /* White text */
-            border: none; /* No border */
-            padding: 5px 0; /* Reduced padding */
-            font-size: 12px; /* Smaller font size */
-            border-radius: 5px; /* Rounded corners */
-            cursor: pointer; /* Pointer cursor on hover */
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
-            display: flex; /* Flexbox for icon and label */
-            align-items: center; /* Center alignment */
-            justify-content: center; /* Center alignment */
-        }
-
-        /* Icon Margin */
-        .crud-buttons button i {
-            margin-right: 3px; /* Space between icon and label */
-        }
-
-        /* Update Button */
-        .crud-buttons button:nth-child(1) {
-            background-color: #2ecc71; /* Green background for update */
-        }
-
-        /* Delete Button */
-        .crud-buttons button:nth-child(2) {
-            background-color: #e74c3c; /* Red background for delete */
-        }
-
-        /* Hover Effect */
-        .crud-buttons button:hover {
-            background-color: #2980b9; /* Darker blue on hover */
-            transform: translateY(-2px); /* Slight lift effect */
-        }
-
-        /* Update Button Hover Effect */
-        .crud-buttons button:nth-child(1):hover {
-            background-color: #27ae60; /* Darker green on hover */
-        }
-
-        /* Delete Button Hover Effect */
-        .crud-buttons button:nth-child(2):hover {
-            background-color: #c0392b; /* Darker red on hover */
         }
     </style>
 </head>
@@ -284,12 +165,10 @@
             <td th:text="${customer.gender}"></td>
             <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
             <td>
-
                 <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"
-                        sec:authorize="hasAuthority('PERMISSION_UPDATE')"><i class="fas fa-edit"></i>Update</button>
+                        sec:authorize="hasAuthority('PERMISSION_UPDATE')">Update</button>
                 <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"
-                        sec:authorize="hasAuthority('PERMISSION_DELETE')"><i class="fas fa-trash-alt"></i>Delete</button>
-
+                        sec:authorize="hasAuthority('PERMISSION_DELETE')">Delete</button>
             </td>
         </tr>
         </tbody>
@@ -442,16 +321,6 @@
 
 <script>
     function showCreateForm() {
-        document.getElementById("empNo").value = '0';
-        document.getElementById("name").value = '';
-        document.getElementById("email").value = '';
-        document.getElementById("permAddress").value = '';
-        document.getElementById("tempAddress").value = '';
-        document.getElementById("phone").value = '';
-        document.getElementById("birthday").value = '';
-        document.getElementById("birthPlace").value = '';
-        document.getElementById("gender").value = 'Male';  // Set default value
-        document.getElementById("salary").value = '';
         document.getElementById('createFormModal').style.display = 'block';
     }
 
@@ -608,16 +477,14 @@
                         <td>${customer.gender}</td>
                         <td>${customer.salary.toLocaleString()}</td>
                         <td>
-                        <div class="crud-buttons">
                             <button onclick="showUpdateForm(${customer.cif})"
-                                    sec:authorize="hasAuthority('PERMISSION_UPDATE')"><i class="fas fa-edit"></i>
+                                    sec:authorize="hasAuthority('PERMISSION_UPDATE')">
                                 Update
                             </button>
                             <button onclick="deleteCustomer(${customer.cif})"
-                                    sec:authorize="hasAuthority('PERMISSION_DELETE')"><i class="fas fa-trash-alt"></i>
+                                    sec:authorize="hasAuthority('PERMISSION_DELETE')">
                                 Delete
                             </button>
-                            </div>
                         </td>
                     `;
                     tableBody.appendChild(row);

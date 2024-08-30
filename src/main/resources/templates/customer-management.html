@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Panel</title>
+    <link rel="stylesheet" th:href="@{/css/user-customer-management.css}">
+</head>
+<body>
+<div class="sidebar">
+    <h2>Hello, User</h2>
+    <a href="customer-management">Customer</a>
+    <a href="/logout">Logout</a>
+</div>
+<div class="main-content">
+    <h1>CUSTOMER MANAGEMENT</h1>
+    <button id="createCustomerBtn" onclick="showCreateForm()" style="display: none;">Create New Customer</button>
+    <table>
+        <thead>
+        <tr>
+            <th>Index</th>
+            <th>Customer ID</th>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Permanent Address</th>
+            <th>Temporary Address</th>
+            <th>Phone</th>
+            <th>Birthday</th>
+            <th>Birth Place</th>
+            <th>Gender</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="customer, iterStat : ${customers}">
+            <td th:text="${iterStat.count}"></td>
+            <td th:text="${customer.cif}"></td>
+            <td th:text="${customer.empNo}"></td>
+            <td th:text="${customer.name}"></td>
+            <td th:text="${customer.email}"></td>
+            <td th:text="${customer.permAddress}"></td>
+            <td th:text="${customer.tempAddress}"></td>
+            <td th:text="${customer.phone}"></td>
+            <td th:text="${#temporals.format(customer.birthday, 'yyyy-MM-dd')}"></td>
+            <td th:text="${customer.birthPlace}"></td>
+            <td th:text="${customer.gender}"></td>
+            <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
+            <td>
+                <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"
+                        sec:authorize="hasAuthority('PERMISSION_UPDATE')">Update</button>
+                <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"
+                        sec:authorize="hasAuthority('PERMISSION_DELETE')">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Form Modal -->
+<div id="createFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideCreateForm()">&times;</span>
+        <h2>Create New Customer</h2>
+        <form id="createCustomerForm">
+            <div class="form-group">
+                <label for="empNo">Employee ID:</label>
+                <input type="text" id="empNo" name="empNo" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="permAddress">Permanent Address:</label>
+                <input type="text" id="permAddress" name="permAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="tempAddress">Temporary Address:</label>
+                <input type="text" id="tempAddress" name="tempAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="birthday">Birthday:</label>
+                <input type="date" id="birthday" name="birthday" required>
+            </div>
+            <div class="form-group">
+                <label for="birthPlace">Birth Place:</label>
+                <input type="text" id="birthPlace" name="birthPlace" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="salary">Salary:</label>
+                <input type="number" id="salary" name="salary" required>
+            </div>
+            <button type="submit">Create</button>
+            <button type="button" onclick="hideCreateForm()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Update Form Modal -->
+<div id="updateFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideUpdateForm()">&times;</span>
+        <h2>Update Customer</h2>
+        <form id="updateCustomerForm">
+            <div class="form-group">
+                <label for="updateCif">Customer ID:</label>
+                <input type="text" id="updateCif" name="cif" readonly>
+            </div>
+            <div class="form-group">
+                <label for="updateEmpNo">Employee ID:</label>
+                <input type="text" id="updateEmpNo" name="empNo" required>
+            </div>
+            <div class="form-group">
+                <label for="updateName">Name:</label>
+                <input type="text" id="updateName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="updateEmail">Email:</label>
+                <input type="email" id="updateEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="updatePermAddress">Permanent Address:</label>
+                <input type="text" id="updatePermAddress" name="permAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="updateTempAddress">Temporary Address:</label>
+                <input type="text" id="updateTempAddress" name="tempAddress" required>
+            </div>
+            <div class="form-group">
+                <label for="updatePhone">Phone:</label>
+                <input type="text" id="updatePhone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="updateBirthday">Birthday:</label>
+                <input type="date" id="updateBirthday" name="birthday" required>
+            </div>
+            <div class="form-group">
+                <label for="updateBirthPlace">Birth Place:</label>
+                <input type="text" id="updateBirthPlace" name="birthPlace" required>
+            </div>
+            <div class="form-group">
+                <label for="updateGender">Gender:</label>
+                <select id="updateGender" name="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="updateSalary">Salary:</label>
+                <input type="number" id="updateSalary" name="salary" required>
+            </div>
+            <button type="submit">Update</button>
+            <button type="button" onclick="hideUpdateForm()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/user-customer-management.js}"></script>
+</body>
+</html>

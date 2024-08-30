@@ -79,4 +79,19 @@ public class AdminCustomerController {
         myCustomerService.deleteCustomer(cif);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/customers/filter")
+    @ResponseBody
+    public ResponseEntity<List<MyCustomer>> filterCustomersBySalary(@RequestParam double minSalary, @RequestParam double maxSalary) {
+        List<MyCustomer> customers = myCustomerService.getAllCustomers().stream()
+                .filter(customer -> customer.getSalary() >= minSalary && customer.getSalary() <= maxSalary)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(customers);
+    }
+    @DeleteMapping("/customers")
+    @ResponseBody
+    public ResponseEntity<Void> deleteCustomers(@RequestBody Map<String, List<Long>> request) {
+        List<Long> customerIds = request.get("customerIds");
+        myCustomerService.deleteCustomers(customerIds);
+        return ResponseEntity.noContent().build();
+    }
 }
