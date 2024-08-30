@@ -294,3 +294,70 @@ function updateSalaries(type, amount) {
     })
     .catch(error => alert(error.message));
 }
+function filterBySalary() {
+    const minSalary = document.getElementById('minSalary').value;
+    const maxSalary = document.getElementById('maxSalary').value;
+
+    fetch(`/admin/customers/filter?minSalary=${minSalary}&maxSalary=${maxSalary}`)
+        .then(response => response.json())
+        .then(customers => {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = '';
+            customers.forEach((customer, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="customer-checkbox" value="${customer.cif}"></td>
+                    <td>${index + 1}</td>
+                    <td>${customer.cif}</td>
+                    <td>${customer.empNo}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.permAddress}</td>
+                    <td>${customer.tempAddress}</td>
+                    <td>${customer.phone}</td>
+                    <td>${new Date(customer.birthday).toISOString().split('T')[0]}</td>
+                    <td>${customer.birthPlace}</td>
+                    <td>${customer.gender}</td>
+                    <td>${customer.salary.toFixed(2)}</td>
+                    <td>
+                        <button onclick="showUpdateForm(${customer.cif})">Update</button>
+                        <button onclick="deleteCustomer(${customer.cif})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+}
+function deleteSelectedCustomers() {
+    const selectedCustomerIds = Array.from(document.querySelectorAll('.customer-checkbox:checked'))
+        .map(checkbox => checkbox.value);
+
+    if (selectedCustomerIds.length === 0) {
+        alert('No customers selected for deletion.');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to delete the selected customers?')) {
+        return;
+    }
+
+    fetch('/admin/customers', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ customerIds: selectedCustomerIds })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Selected customers deleted successfully.');
+            location.reload();
+        } else {
+            alert('Failed to delete selected customers.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting selected customers.');
+    });
+}

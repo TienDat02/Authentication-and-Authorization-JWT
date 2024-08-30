@@ -1,35 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <link rel="stylesheet" href="/css/admin-customer-management.css">
+    <title>User Panel</title>
+    <link rel="stylesheet" th:href="@{/css/user-customer-management.css}">
 </head>
 <body>
 <div class="sidebar">
-    <h2>Hello, Admin</h2>
-    <a href="user-management">User</a>
+    <h2>Hello, User</h2>
     <a href="customer-management">Customer</a>
     <a href="/logout">Logout</a>
 </div>
 <div class="main-content">
     <h1>CUSTOMER MANAGEMENT</h1>
-    <div class="controls">
-        <input type="text" id="searchInput" placeholder="Search by name or ID...">
-        <button onclick="searchCustomers()">Search</button>
-        <button onclick="showCreateForm()">Create New Customer</button>
-        <button onclick="showMassSalaryUpdateForm()">Mass Salary Update</button>
-        <input type="number" id="minSalary" placeholder="Min Salary">
-        <input type="number" id="maxSalary" placeholder="Max Salary">
-        <button onclick="filterBySalary()">Filter by Salary</button>
-        <!-- Add Delete Customers Button -->
-        <button onclick="deleteSelectedCustomers()">Delete Customers</button>
-    </div>
+    <button id="createCustomerBtn" onclick="showCreateForm()" style="display: none;">Create New Customer</button>
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"></th>
             <th>Index</th>
             <th>Customer ID</th>
             <th>Employee ID</th>
@@ -47,7 +36,6 @@
         </thead>
         <tbody>
         <tr th:each="customer, iterStat : ${customers}">
-            <td><input type="checkbox" class="customer-checkbox" th:value="${customer.cif}"></td>
             <td th:text="${iterStat.count}"></td>
             <td th:text="${customer.cif}"></td>
             <td th:text="${customer.empNo}"></td>
@@ -61,8 +49,10 @@
             <td th:text="${customer.gender}"></td>
             <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
             <td>
-                <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'">Update</button>
-                <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'">Delete</button>
+                <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"
+                        sec:authorize="hasAuthority('PERMISSION_UPDATE')">Update</button>
+                <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"
+                        sec:authorize="hasAuthority('PERMISSION_DELETE')">Delete</button>
             </td>
         </tr>
         </tbody>
@@ -183,57 +173,6 @@
     </div>
 </div>
 
-<!-- Mass Salary Update Modal -->
-<div id="massSalaryUpdateModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="hideMassSalaryUpdateForm()">&times;</span>
-        <h2>Mass Salary Update</h2>
-
-        <h3>Selected Customers</h3>
-        <table id="selectedCustomersTable">
-            <thead>
-            <tr>
-                <th>Index</th>
-                <th>Customer ID</th>
-                <th>Employee ID</th>
-                <th>Name</th>
-                <th>Salary</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Selected customers will be populated here -->
-            </tbody>
-        </table>
-
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'fixedUpdate')">Fixed Update</button>
-            <button class="tablinks" onclick="openTab(event, 'raiseDeduction')">Raise/Deduction</button>
-        </div>
-
-        <div id="fixedUpdate" class="tabcontent">
-            <h3>Fixed Salary Update</h3>
-            <form id="fixedUpdateForm">
-                <label for="fixedSalary">New Salary:</label>
-                <input type="number" id="fixedSalary" name="fixedSalary" required>
-                <button type="submit">Update</button>
-            </form>
-        </div>
-
-        <div id="raiseDeduction" class="tabcontent">
-            <h3>Salary Raise/Deduction</h3>
-            <form id="raiseDeductionForm">
-                <label for="amount">Amount:</label>
-                <input type="number" id="amount" name="amount" required>
-                <select id="operation" name="operation">
-                    <option value="raise">Raise</option>
-                    <option value="deduction">Deduction</option>
-                </select>
-                <button type="submit">Apply</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script src="/js/admin-customer-management.js"></script>
+<script th:src="@{/js/user-customer-management.js}"></script>
 </body>
 </html>

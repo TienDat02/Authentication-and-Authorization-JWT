@@ -64,4 +64,10 @@ public class MyCustomerService {
         }
         return updatedCustomers;
     }
+
+    public void deleteCustomers(List<Long> customerIds) {
+        for (Long cif : customerIds) {
+            deleteCustomer(cif);
+        }
+    }
 }
