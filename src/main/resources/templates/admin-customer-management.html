@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
@@ -78,12 +80,6 @@
             display: flex;
             gap: 10px;
         }
-
-        .actions button {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
         /* Modal */
         .modal {
             display: none;
@@ -104,7 +100,78 @@
             margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 60%; /* Reduced width for a more compact look */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+        }
+
+        .form-group {
+            display: flex; /* Use flexbox for alignment */
+            flex-direction: column; /* Stack label and input vertically */
+            margin-bottom: 15px; /* Space between form groups */
+        }
+
+        .form-group label {
+            font-weight: bold; /* Bold label for clarity */
+            margin-bottom: 5px; /* Space between label and input */
+            color: #34495e; /* Darker color for labels */
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 8px; /* More padding for input fields */
+            font-size: 14px; /* Consistent font size */
+            border: 1px solid #ccc; /* Border for inputs */
+            border-radius: 4px; /* Rounded corners */
+            outline: none; /* Remove default outline */
+            transition: border-color 0.3s ease; /* Smooth transition */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #3498db; /* Highlight input on focus */
+        }
+
+        .modal-content h2 {
+            text-align: center; /* Center title */
+            margin-bottom: 20px; /* Space below the title */
+            color: #2c3e50; /* Darker title color */
+        }
+
+        .modal-content button[type="submit"],
+        .modal-content button[type="button"] {
+            width: 100px; /* Fixed width for buttons */
+            padding: 10px; /* Padding for buttons */
+            margin-right: 10px; /* Space between buttons */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        .modal-content button[type="submit"] {
+            background-color: #2ecc71; /* Green background for submit */
+            color: white; /* White text */
+        }
+
+        .modal-content button[type="button"] {
+            background-color: #e74c3c; /* Red background for cancel */
+            color: white; /* White text */
+        }
+
+        .modal-content button:hover {
+            background-color: #27ae60; /* Darker green on hover */
+        }
+
+        .modal-content button[type="button"]:hover {
+            background-color: #c0392b; /* Darker red on hover */
+        }
+
+        /* Center the buttons horizontally */
+        .modal-content .form-buttons {
+            display: flex; /* Flexbox for alignment */
+            justify-content: center; /* Center alignment */
+            margin-top: 20px; /* Space above buttons */
         }
 
         .close {
@@ -120,56 +187,41 @@
             text-decoration: none;
             cursor: pointer;
         }
+        /* Style for the search input field */
+        #searchInput {
+            padding: 10px 15px; /* Increase padding for a larger input field */
+            width: 500px; /* Increase the width of the search bar */
+            border: 2px solid #3498db; /* Add a border to match the button color */
+            border-radius: 5px; /* Rounded corners */
+            margin-right: 10px; /* Add some space to the right */
+            font-size: 14px; /* Increase the font size */
+        }
 
+        /* Update .controls style */
         .controls {
             margin-bottom: 20px;
             display: flex;
             gap: 10px;
+            align-items: center; /* Center align the controls */
+            margin-top: 0; /* Reduce or remove margin at the top */
         }
 
-        .controls input[type="text"] {
-            flex-grow: 1;
-            padding: 5px;
-            font-size: 16px;
-        }
-
+        /* Button styles within the controls */
         .controls button {
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
+            padding: 8px 12px; /* Add padding to the buttons */
+            background-color: #3498db; /* Blue background for buttons */
+            color: white; /* White text */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease; /* Smooth transition */
         }
 
-        /* Tab styles */
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
+        /* Button hover effect */
+        .controls button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
         }
 
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-        }
-
-        .tab button:hover {
-            background-color: #ddd;
-        }
-
-        .tab button.active {
-            background-color: #ccc;
-        }
-
-        .tabcontent {
-            display: none;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            border-top: none;
-        }
 
         #selectedCustomersTable {
             width: 100%;
@@ -186,6 +238,60 @@
         #selectedCustomersTable th {
             background-color: #f2f2f2;
         }
+        /* Button Styles */
+        .crud-buttons {
+            display: flex;
+            flex-direction: column; /* Stacks buttons vertically */
+            gap: 5px; /* Space between buttons */
+            align-items: center; /* Center alignment */
+        }
+
+        .crud-buttons button {
+            width: 80px; /* Smaller fixed width for both buttons */
+            background-color: #3498db; /* Blue background */
+            color: white; /* White text */
+            border: none; /* No border */
+            padding: 5px 0; /* Reduced padding */
+            font-size: 12px; /* Smaller font size */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+            display: flex; /* Flexbox for icon and label */
+            align-items: center; /* Center alignment */
+            justify-content: center; /* Center alignment */
+        }
+
+        /* Icon Margin */
+        .crud-buttons button i {
+            margin-right: 3px; /* Space between icon and label */
+        }
+
+        /* Update Button */
+        .crud-buttons button:nth-child(1) {
+            background-color: #2ecc71; /* Green background for update */
+        }
+
+        /* Delete Button */
+        .crud-buttons button:nth-child(2) {
+            background-color: #e74c3c; /* Red background for delete */
+        }
+
+        /* Hover Effect */
+        .crud-buttons button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        /* Update Button Hover Effect */
+        .crud-buttons button:nth-child(1):hover {
+            background-color: #27ae60; /* Darker green on hover */
+        }
+
+        /* Delete Button Hover Effect */
+        .crud-buttons button:nth-child(2):hover {
+            background-color: #c0392b; /* Darker red on hover */
+        }
+
     </style>
 </head>
 <body>
@@ -203,6 +309,7 @@
         <button onclick="showCreateForm()">Create New Customer</button>
         <button onclick="showMassSalaryUpdateForm()">Mass Salary Update</button>
     </div>
+
     <table>
         <thead>
         <tr>
@@ -238,9 +345,12 @@
             <td th:text="${customer.gender}"></td>
             <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
             <td>
-                <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'">Update</button>
-                <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'">Delete</button>
+
+                    <button onclick='showUpdateForm(${customer.cif})'><i class="fas fa-edit"></i> Update</button>
+                    <button onclick="deleteCustomer(${customer.cif})"><i class="fas fa-trash-alt"></i>Delete</button>
+
             </td>
+
         </tr>
         </tbody>
     </table>
@@ -413,6 +523,17 @@
 
 <script>
     function showCreateForm() {
+        // Clear all fields
+        document.getElementById("empNo").value = '0';
+        document.getElementById("name").value = '';
+        document.getElementById("email").value = '';
+        document.getElementById("permAddress").value = '';
+        document.getElementById("tempAddress").value = '';
+        document.getElementById("phone").value = '';
+        document.getElementById("birthday").value = '';
+        document.getElementById("birthPlace").value = '';
+        document.getElementById("gender").value = 'Male';  // Set default value
+        document.getElementById("salary").value = '';
         document.getElementById('createFormModal').style.display = 'block';
     }
 
@@ -446,7 +567,7 @@
     document.getElementById('createCustomerForm').onsubmit = function(e) {
         e.preventDefault();
 
-        const empNo = document.getElementById('empNo').value;
+        let empNo = document.getElementById('empNo').value;
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const permAddress = document.getElementById('permAddress').value;
@@ -456,7 +577,9 @@
         const birthPlace = document.getElementById('birthPlace').value;
         const gender = document.getElementById('gender').value;
         const salary = document.getElementById('salary').value;
-
+        if (!empNo.trim()) {
+            empNo = '0';
+        }
         fetch('/admin/add-customer', {
             method: 'POST',
             headers: {
@@ -491,7 +614,7 @@
         e.preventDefault();
 
         const cif = document.getElementById('updateCif').value;
-        const empNo = document.getElementById('updateEmpNo').value;
+        let empNo = document.getElementById('updateEmpNo').value;
         const name = document.getElementById('updateName').value;
         const email = document.getElementById('updateEmail').value;
         const permAddress = document.getElementById('updatePermAddress').value;
@@ -501,6 +624,7 @@
         const birthPlace = document.getElementById('updateBirthPlace').value;
         const gender = document.getElementById('updateGender').value;
         const salary = document.getElementById('updateSalary').value;
+
 
         fetch(`/admin/customers/${cif}`, {
             method: 'PUT',
@@ -570,8 +694,10 @@
                         <td>${customer.gender}</td>
                         <td>${customer.salary.toLocaleString()}</td>
                         <td>
-                            <button onclick="showUpdateForm(${customer.cif})">Update</button>
-                            <button onclick="deleteCustomer(${customer.cif})">Delete</button>
+                            <div class="crud-buttons">
+                                <button onclick='showUpdateForm(${customer.cif})'><i class="fas fa-edit"></i> Update</button>
+                                <button onclick="deleteCustomer(${customer.cif})"><i class="fas fa-trash-alt"></i>Delete</button>
+                            </div>
                         </td>
                     `;
                     tableBody.appendChild(row);

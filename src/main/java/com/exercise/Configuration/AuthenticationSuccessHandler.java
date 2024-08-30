@@ -1,4 +1,4 @@
-package com.exercise.Controller;
+package com.exercise.Configuration;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;

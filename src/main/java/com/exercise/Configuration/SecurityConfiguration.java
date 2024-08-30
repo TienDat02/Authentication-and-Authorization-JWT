@@ -1,6 +1,5 @@
 package com.exercise.Configuration;
 
-import com.exercise.Controller.AuthenticationSuccessHandler;
 import com.exercise.Service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
