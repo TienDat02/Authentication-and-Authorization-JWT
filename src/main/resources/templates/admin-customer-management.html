@@ -547,20 +547,24 @@
     <div class="modal-content">
         <span class="close" onclick="hideMassDeleteForm()">&times;</span>
         <h2>Mass Delete Customers</h2>
+
+        <h3>Selected Customers</h3>
+        <table id="selectedCustomersForDeleteTable">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Customer ID</th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Selected customers will be populated here -->
+            </tbody>
+        </table>
+
         <form id="massDeleteForm">
-            <table id="massDeleteTable">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Customer ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- This will be populated dynamically -->
-                </tbody>
-            </table>
             <button type="submit">Confirm Delete</button>
             <button type="button" onclick="hideMassDeleteForm()">Cancel</button>
         </form>
@@ -571,25 +575,29 @@
 
 
 function showMassDeleteForm() {
-    const tableBody = document.querySelector('#massDeleteTable tbody');
-    tableBody.innerHTML = '';
+    const selectedCustomers = getSelectedCustomers();
+    if (selectedCustomers.length === 0) {
+        alert('Please select at least one customer.');
+        return;
+    }
 
-    fetch('/admin/customers')
-        .then(response => response.json())
-        .then(customers => {
-            customers.forEach(customer => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="checkbox" name="selectedCustomers" value="${customer.cif}"></td>
-                    <td>${customer.cif}</td>
-                    <td>${customer.name}</td>
-                    <td>${customer.email}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        });
-
+    populateSelectedCustomersForDeleteTable(selectedCustomers);
     document.getElementById('massDeleteModal').style.display = 'block';
+}
+
+function populateSelectedCustomersForDeleteTable(customers) {
+    const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
+    tableBody.innerHTML = '';
+    customers.forEach((customer, index) => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${customer.cif}</td>
+            <td>${customer.empNo}</td>
+            <td>${customer.name}</td>
+            <td>${customer.email}</td>
+        `;
+    });
 }
 
 function hideMassDeleteForm() {
@@ -599,8 +607,7 @@ function hideMassDeleteForm() {
 document.getElementById('massDeleteForm').onsubmit = function(e) {
     e.preventDefault();
 
-    const selectedCustomers = Array.from(document.querySelectorAll('input[name="selectedCustomers"]:checked'))
-        .map(checkbox => parseInt(checkbox.value));
+    const selectedCustomers = getSelectedCustomers();
 
     if (selectedCustomers.length === 0) {
         alert('Please select at least one customer to delete.');
@@ -613,7 +620,7 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ customerIds: selectedCustomers })
+            body: JSON.stringify({ customerIds: selectedCustomers.map(c => c.cif) })
         })
         .then(response => {
             if (!response.ok) throw new Error('Failed to delete customers');
@@ -849,33 +856,34 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
         openTab(null, 'fixedUpdate'); // Open the first tab by default
     }
 
-    function getSelectedCustomers() {
-        const checkboxes = document.querySelectorAll('.customer-checkbox:checked');
-        return Array.from(checkboxes).map(checkbox => {
-            const row = checkbox.closest('tr');
-            return {
-                cif: checkbox.value,
-                empNo: row.cells[3].textContent,
-                name: row.cells[4].textContent,
-                salary: row.cells[12].textContent // Adjust this index if needed
-            };
-        });
-    }
+function getSelectedCustomers() {
+    const checkboxes = document.querySelectorAll('.customer-checkbox:checked');
+    return Array.from(checkboxes).map(checkbox => {
+        const row = checkbox.closest('tr');
+        return {
+            cif: checkbox.value,
+            empNo: row.cells[3].textContent,
+            name: row.cells[4].textContent,
+            email: row.cells[5].textContent, // Ensure email is correctly retrieved
+            salary: row.cells[12].textContent // Adjust this index if needed
+        };
+    });
+}
 
-    function populateSelectedCustomersTable(customers) {
-        const tableBody = document.querySelector('#selectedCustomersTable tbody');
-        tableBody.innerHTML = '';
-        customers.forEach((customer, index) => {
-            const row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${customer.cif}</td>
-                <td>${customer.empNo}</td>
-                <td>${customer.name}</td>
-                <td>${customer.salary}</td>
-            `;
-        });
-    }
+function populateSelectedCustomersForDeleteTable(customers) {
+    const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
+    tableBody.innerHTML = '';
+    customers.forEach((customer, index) => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${customer.cif}</td>
+            <td>${customer.empNo}</td>
+            <td>${customer.name}</td>
+            <td>${customer.email}</td> <!-- Ensure email is correctly displayed -->
+        `;
+    });
+}
 
     function hideMassSalaryUpdateForm() {
         document.getElementById('massSalaryUpdateModal').style.display = 'none';
@@ -940,25 +948,29 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
     }
 
     function showMassDeleteForm() {
-        const tableBody = document.querySelector('#massDeleteTable tbody');
-        tableBody.innerHTML = '';
+        const selectedCustomers = getSelectedCustomers();
+        if (selectedCustomers.length === 0) {
+            alert('Please select at least one customer.');
+            return;
+        }
 
-        fetch('/admin/customers')
-            .then(response => response.json())
-            .then(customers => {
-                customers.forEach(customer => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" name="selectedCustomers" value="${customer.cif}"></td>
-                        <td>${customer.cif}</td>
-                        <td>${customer.name}</td>
-                        <td>${customer.email}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            });
-
+        populateSelectedCustomersForDeleteTable(selectedCustomers);
         document.getElementById('massDeleteModal').style.display = 'block';
+    }
+
+    function populateSelectedCustomersForDeleteTable(customers) {
+        const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
+        tableBody.innerHTML = '';
+        customers.forEach((customer, index) => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${customer.cif}</td>
+                <td>${customer.empNo}</td>
+                <td>${customer.name}</td>
+                <td>${customer.email}</td>
+            `;
+        });
     }
 
     function hideMassDeleteForm() {
@@ -968,8 +980,7 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
     document.getElementById('massDeleteForm').onsubmit = function(e) {
         e.preventDefault();
 
-        const selectedCustomers = Array.from(document.querySelectorAll('input[name="selectedCustomers"]:checked'))
-            .map(checkbox => parseInt(checkbox.value));
+        const selectedCustomers = getSelectedCustomers();
 
         if (selectedCustomers.length === 0) {
             alert('Please select at least one customer to delete.');
@@ -982,7 +993,7 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ customerIds: selectedCustomers })
+                body: JSON.stringify({ customerIds: selectedCustomers.map(c => c.cif) })
             })
             .then(response => {
                 if (!response.ok) throw new Error('Failed to delete customers');
