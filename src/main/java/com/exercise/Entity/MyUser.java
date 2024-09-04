@@ -9,8 +9,9 @@ public class MyUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    public String username;
+    private String username;
     public String password;
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

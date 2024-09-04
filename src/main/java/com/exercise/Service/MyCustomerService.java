@@ -67,8 +67,6 @@ public class MyCustomerService {
     }
 
     public void deleteCustomers(List<Long> customerIds) {
-        for (Long cif : customerIds) {
-            deleteCustomer(cif);
-        }
+        customerIds.forEach(this::deleteCustomer);
     }
 }
