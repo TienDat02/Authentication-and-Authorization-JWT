@@ -21,6 +21,7 @@ public class RegistrationController {
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
                                @RequestParam String password,
+                               @RequestParam String email,
                                @RequestParam String confirmPassword) {
         // Basic validation
         if (!password.equals(confirmPassword)) {
@@ -33,7 +34,7 @@ public class RegistrationController {
         }
 
         // Create and save the new user
-        MyUser newUser = new MyUser(username, passwordEncoder.encode(password));
+        MyUser newUser = new MyUser(username, passwordEncoder.encode(password), email);
         newUser.addRole("USER");
         newUser.setPermissions(Set.of("Read"));
         myUserRepository.save(newUser);

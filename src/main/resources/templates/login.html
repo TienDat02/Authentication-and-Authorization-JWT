@@ -70,6 +70,20 @@
         .login-container .sign-up-button:hover {
             background-color: #0056b3; /* Màu xanh dương đậm hơn khi hover */
         }
+        .login-container .forgot-password {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .login-container .forgot-password a {
+            color: #007bff; /* Màu xanh nước biển */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-container .forgot-password a:hover {
+            text-decoration: underline; /* Gạch chân khi hover */
+        }
     </style>
 </head>
 <body>
@@ -82,7 +96,11 @@
         <input type="password" id="password" name="password" required>
         <input type="submit" value="Login">
         <input type="button" value="Sign Up" class="sign-up-button" onclick="window.location.href='/register';">
+
     </form>
+    <div class="forgot-password">
+        <a href="/forgot-password">Forgot Password?</a> <!-- Thay đổi thành href -->
+    </div>
 </div>
 </body>
 </html>

@@ -58,6 +58,7 @@ public class AdminUserController {
             // Update fields
             existingUser.setUsername(user.getUsername());
             existingUser.setRoles(user.getRoles());
+            existingUser.setEmail(user.getEmail());
             existingUser.setPermissions(user.getPermissions());
 
             // Only update password if it's provided and different

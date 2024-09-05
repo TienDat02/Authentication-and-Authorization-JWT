@@ -1,7 +1,7 @@
 package com.exercise.Controller;
 
 import com.exercise.Service.MyUserDetailService;
-import com.exercise.Webtoken.JwtService;
+import com.exercise.Service.JwtService;
 import com.exercise.Webtoken.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

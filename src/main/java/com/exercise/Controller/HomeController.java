@@ -25,4 +25,8 @@ public class HomeController {
     public String handleRegister() {
         return "register";
     }
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordPage() { return "forgot-password";    }
+
 }
+

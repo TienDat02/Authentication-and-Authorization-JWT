@@ -1,7 +1,7 @@
 package com.exercise.Configuration;
 
 import com.exercise.Service.MyUserDetailService;
-import com.exercise.Webtoken.JwtService;
+import com.exercise.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -147,11 +147,13 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto; /* Thay đổi khoảng cách từ trên cùng */
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
+            width: 90%; /* Mở rộng chiều rộng modal */
+            max-width: 800px; /* Tăng chiều rộng tối đa */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng đổ bóng */
+            border-radius: 8px; /* Bo tròn các góc */
         }
 
         .close {
@@ -215,6 +217,7 @@
         .submit-button:hover {
             background-color: #2980b9;
         }
+
     </style>
 </head>
 <body>
@@ -233,6 +236,7 @@
             <th>STT</th>
             <th>USER ID</th>
             <th>USERNAME</th>
+            <th>EMAIL</th> <!-- Thêm tiêu đề cột Email -->
             <th>ROLES</th>
             <th>PERMISSIONS</th>
             <th>ACTIONS</th>
@@ -243,16 +247,18 @@
             <td th:text="${iterStat.count}">1</td>
             <td th:text="${user.id}">123</td>
             <td th:text="${user.username}">john_doe</td>
+            <td th:text="${user.email}">john@example.com</td> <!-- Thêm dữ liệu email -->
             <td th:text="${#strings.listJoin(user.roles, ', ')}">ROLE_USER</td>
             <td th:text="${#strings.listJoin(user.permissions, ', ')}">READ, WRITE</td>
             <td>
-
+                <div class="crud-buttons">
                     <button onclick='openEditModal(${user})'><i class="fas fa-edit"></i>Edit</button>
-                    <button onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt">Delete</button>
-
+                    <button onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i>Delete</button>
+                </div>
             </td>
         </tr>
         </tbody>
+
     </table>
 </div>
 
@@ -265,6 +271,10 @@
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
@@ -300,6 +310,7 @@
     </div>
 </div>
 
+
 <!-- Edit User Modal -->
 <div id="editUserModal" class="modal">
     <div class="modal-content">
@@ -313,6 +324,11 @@
             <div class="form-group">
                 <label for="editUsername">Username:</label>
                 <input type="text" id="editUsername" name="username" required>
+            </div>
+            <!-- Thêm trường email -->
+            <div class="form-group">
+                <label for="editEmail">Email:</label>
+                <input type="email" id="editEmail" name="email" required>
             </div>
             <div class="form-group">
                 <label>Roles:</label>
@@ -343,6 +359,7 @@
     </div>
 </div>
 
+
 <script>
     function openModal() {
         document.getElementById('addUserModal').style.display = 'block';
@@ -372,7 +389,7 @@
     function openEditModal(user) {
         document.getElementById('editUserId').value = user.id;
         document.getElementById('editUsername').value = user.username;
-
+        document.getElementById('editEmail').value = user.email; // Đảm bảo email được cập nhật đúng
         // Set roles checkboxes
         document.querySelectorAll('input[name="editRoles"]').forEach(checkbox => {
             checkbox.checked = user.roles.includes(checkbox.value);
@@ -393,6 +410,7 @@
         document.getElementById('editUserModal').style.display = 'block';
     }
 
+
     function closeEditModal() {
         document.getElementById('editUserModal').style.display = 'none';
     }
@@ -401,6 +419,7 @@
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
         const roles = Array.from(document.querySelectorAll('input[name="roles"]:checked')).map(checkbox => checkbox.value);
         const permissions = Array.from(document.querySelectorAll('input[name="permissions"]:checked')).map(checkbox => checkbox.value);
 
@@ -409,7 +428,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: username, password: password, roles: roles, permissions: permissions })
+            body: JSON.stringify({ username: username, email: email, password: password, roles: roles, permissions: permissions })
         })
         .then(response => {
             if (!response.ok) throw new Error('Username already exists');
@@ -427,6 +446,7 @@
         e.preventDefault();
         const userId = document.getElementById('editUserId').value;
         const username = document.getElementById('editUsername').value;
+        const email = document.getElementById("editEmail").value; // Đảm bảo lấy đúng giá trị email
         const roles = Array.from(document.querySelectorAll('input[name="editRoles"]:checked')).map(checkbox => checkbox.value);
         const permissions = Array.from(document.querySelectorAll('input[name="editPermissions"]:checked')).map(checkbox => checkbox.value);
 
@@ -435,19 +455,20 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id: userId, username: username, roles: roles, permissions: permissions })
+            body: JSON.stringify({ id: userId, username: username, email: email, roles: roles, permissions: permissions })
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to update user');
-            return response.json();
-        })
-        .then(user => {
-            alert('User updated successfully!');
-            closeEditModal();
-            refreshUserTable();
-        })
-        .catch(error => alert(error.message));
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to update user');
+                return response.json();
+            })
+            .then(user => {
+                alert('User updated successfully!');
+                closeEditModal();
+                refreshUserTable();
+            })
+            .catch(error => alert(error.message));
     };
+
 
     function deleteUser(userId) {
         if (confirm('Are you sure you want to delete this user?')) {
@@ -475,22 +496,24 @@
                 data.forEach((user, index) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${user.id}</td>
-                        <td>${user.username}</td>
-                        <td>${user.roles.join(', ')}</td>
-                        <td>${user.permissions.join(', ')}</td>
-                        <td>
-                            <div class="crud-buttons">
-                                <button onclick='openEditModal(${JSON.stringify(user)})'><i class="fas fa-edit"></i>Edit</button>
-                                <button onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i>Delete</button>
-                            </div>
-                        </td>
-                    `;
+                    <td>${index + 1}</td>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td> <!-- Thêm cột email -->
+                    <td>${user.roles.join(', ')}</td>
+                    <td>${user.permissions.join(', ')}</td>
+                    <td>
+                        <div class="crud-buttons">
+                            <button onclick='openEditModal(${JSON.stringify(user)})'><i class="fas fa-edit"></i>Edit</button>
+                            <button onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i>Delete</button>
+                        </div>
+                    </td>
+                `;
                     tableBody.appendChild(row);
                 });
             });
     }
+
 
     // Initial table load
     refreshUserTable();

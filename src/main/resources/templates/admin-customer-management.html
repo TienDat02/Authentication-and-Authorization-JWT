@@ -369,8 +369,10 @@
             <td th:text="${customer.gender}"></td>
             <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
             <td>
+                <div class="crud-buttons">
                 <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"><i class="fas fa-edit"></i>Update</button>
                 <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"><i class="fas fa-trash-alt"></i>Delete</button>
+                </div>
             </td>
         </tr>
         </tbody>

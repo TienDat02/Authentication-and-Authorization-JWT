@@ -1,4 +1,4 @@
-package com.exercise.Webtoken;
+package com.exercise.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,9 +13,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
-import static org.springframework.cache.interceptor.SimpleKeyGenerator.generateKey;
 
 @Service
 public class JwtService {
@@ -38,10 +35,10 @@ public class JwtService {
                 .signWith(getSecretKey())
                 .compact();
     }
-    public List<String> extractPermissions(String jwt) {
-        Claims claims = getClaims(jwt);
-        return claims.get("permissions", List.class);
-    }
+//    public List<String> extractPermissions(String jwt) {
+//        Claims claims = getClaims(jwt);
+//        return claims.get("permissions", List.class);
+//    }
     private SecretKey getSecretKey() {
         byte[] decodedKey = Base64.getDecoder().decode(SECRET);
         return Keys.hmacShaKeyFor(decodedKey);
