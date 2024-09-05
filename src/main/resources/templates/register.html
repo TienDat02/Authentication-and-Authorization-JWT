@@ -72,18 +72,28 @@
         .register-container .back-button:hover {
             background-color: #5a6268; /* Màu xám đậm hơn khi hover */
         }
+        .verification-form {
+            display: none;
+            margin-top: 20px;
+        }
+        .verification-form input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            margin: 0 5px;
+        }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="register-container">
     <h2>Register</h2>
-    <form action="/register" method="post">
+    <form id="register-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
 
-        <label for="username">Email:</label>
+        <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
-
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
@@ -93,6 +103,58 @@
         <input type="submit" value="Register">
         <input type="button" value="Back" class="back-button" onclick="window.location.href='/login';">
     </form>
+    <div class="verification-form">
+        <h3>Enter Verification Code</h3>
+        <input type="text" class="code-input">
+        <button id="verify-btn">Verify</button>
+    </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#register-form').submit(function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.post('/register', formData, function(response) {
+                alert('Verification code sent to your email');
+                $('.verification-form').show();
+            }).fail(function(xhr) {
+                alert('Error: ' + xhr.responseText);
+            });
+        });
+
+        $('#verify-btn').click(function() {
+            var code = $('.code-input').map(function() {
+                return $(this).val();
+            }).get().join('');
+            var email = $('#email').val();
+            var username = $('#username').val();
+            var password = $('#password').val();
+
+            $.ajax({
+                url: '/verify',
+                type: 'POST',
+                data: {
+                    email: email,
+                    code: code,
+                    username: username,
+                    password: password
+                },
+                success: function(response) {
+                    alert('Registration successful');
+                    window.location.href = '/login';
+                },
+                error: function(xhr) {
+                    alert('Error: ' + xhr.responseText);
+                }
+            });
+        });
+
+        $('.code-input').on('input', function() {
+            if (this.value.length === 1) {
+                $(this).next('.code-input').focus();
+            }
+        });
+    });
+</script>
 </body>
 </html>

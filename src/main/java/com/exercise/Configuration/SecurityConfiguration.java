@@ -34,7 +34,7 @@ public class SecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(re -> {
-            re.requestMatchers("/home", "/forgot-password/**" ,"/register/**", "/login", "/authenticate").permitAll();
+            re.requestMatchers("/home", "/forgot-password/**" ,"/register/**", "/login", "/authenticate", "/verify").permitAll();
             re.requestMatchers("/admin/**").hasRole("ADMIN");
             re.requestMatchers("/user/customer-management").hasAuthority("PERMISSION_READ");
             re.requestMatchers("/user/create-customer").hasAuthority("PERMISSION_CREATE");
