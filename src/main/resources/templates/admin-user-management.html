@@ -135,25 +135,24 @@
 
         /* Modal styles */
         .modal {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             z-index: 1;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.4);
+            overflow: auto;
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; /* Thay đổi khoảng cách từ trên cùng */
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 90%; /* Mở rộng chiều rộng modal */
-            max-width: 800px; /* Tăng chiều rộng tối đa */
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng đổ bóng */
-            border-radius: 8px; /* Bo tròn các góc */
+            width: 80%;
         }
 
         .close {
@@ -161,7 +160,6 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
-            cursor: pointer;
         }
 
         .close:hover,
@@ -170,7 +168,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
@@ -223,10 +220,14 @@
 <body>
 <div class="sidebar">
     <h2>Hello, Admin</h2>
-    <a href="user-management">User Management</a>
-    <a href="customer-management">Customer Management</a>
+    <a href="/admin/home">Home</a> <!-- Thêm liên kết đến trang Home -->
+    <a href="user-management">User</a>
+    <a href="customer-management">Customer</a>
+    <a href="/reports">View Reports</a>
+    <a href="/settings">Settings</a>
     <a href="/logout">Logout</a>
 </div>
+
 <div class="main-content">
     <h1>Welcome to the Admin Panel</h1>
     <button class="add-button" onclick="openModal()">ADD</button>
