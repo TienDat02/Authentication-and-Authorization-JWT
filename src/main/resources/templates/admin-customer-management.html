@@ -333,6 +333,10 @@
         <button onclick="showCreateForm()">Create New Customer</button>
         <button onclick="showMassSalaryUpdateForm()">Mass Salary Update</button>
         <button onclick="showMassDeleteForm()">Mass Delete</button>
+        <!-- Add new inputs and button for salary range search -->
+        <input type="number" id="minSalary" placeholder="Min Salary">
+        <input type="number" id="maxSalary" placeholder="Max Salary">
+        <button onclick="searchCustomersBySalary()">Search by Salary</button>
     </div>
     <form id="uploadForm" enctype="multipart/form-data" method="post" action="/admin/upload-customers">
         <input type="file" name="file" id="fileInput" accept=".csv">
@@ -1052,6 +1056,51 @@ document.getElementById('uploadForm').addEventListener('submit', function(e) {
             `;
         });
     }
+    function searchCustomersBySalary() {
+    const minSalary = document.getElementById('minSalary').value;
+    const maxSalary = document.getElementById('maxSalary').value;
+
+    if (!minSalary || !maxSalary) {
+        alert('Please enter both minimum and maximum salary.');
+        return;
+    }
+
+    fetch(`/admin/customers/filter?minSalary=${minSalary}&maxSalary=${maxSalary}`)
+        .then(response => response.json())
+        .then(customers => {
+            const tableBody = document.querySelector('tbody');
+            tableBody.innerHTML = '';
+            customers.forEach((customer, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="customer-checkbox" value="${customer.cif}"></td>
+                    <td>${index + 1}</td>
+                    <td>${customer.cif}</td>
+                    <td>${customer.empNo}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.permAddress}</td>
+                    <td>${customer.tempAddress}</td>
+                    <td>${customer.phone}</td>
+                    <td>${new Date(customer.birthday).toISOString().split('T')[0]}</td>
+                    <td>${customer.birthPlace}</td>
+                    <td>${customer.gender}</td>
+                    <td>${customer.salary.toLocaleString()}</td>
+                    <td>
+                    <div class="crud-buttons">
+                        <button onclick="showUpdateForm(${customer.cif})"><i class="fas fa-edit"></i>Update</button>
+                        <button onclick="deleteCustomer(${customer.cif})"><i class="fas fa-trash-alt"></i>Delete</button>
+                    </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while searching customers by salary.');
+        });
+        }
     // Initial table load
     refreshCustomerTable();
 </script>
