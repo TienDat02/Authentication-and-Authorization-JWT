@@ -65,11 +65,19 @@ public class RegistrationController {
         EmailVerification verification = emailVerificationRepository.findByEmail(email)
                 .orElse(null);
 
-        if (verification == null || !verification.getConfirmationCode().equals(code)) {
-            return ResponseEntity.badRequest().body("Invalid verification code");
+        if (verification.getAttempts() >= 5) {
+            emailVerificationRepository.delete(verification);
+            return ResponseEntity.badRequest().body("Too many incorrect attempts. Please request a new verification code.");
+        }
+        if (!verification.getConfirmationCode().equals(code)) {
+            verification.setAttempts(verification.getAttempts() + 1);
+            emailVerificationRepository.save(verification);
+            return ResponseEntity.badRequest().body("Invalid verification code. Attempts left: " + (5 - verification.getAttempts()));
         }
 
         if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
+            emailVerificationRepository.delete(verification);
+            emailService.sendVerificationEmail(email, generateVerificationCode());
             return ResponseEntity.badRequest().body("Verification code has expired");
         }
 

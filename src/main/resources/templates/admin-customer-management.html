@@ -334,6 +334,10 @@
         <button onclick="showMassSalaryUpdateForm()">Mass Salary Update</button>
         <button onclick="showMassDeleteForm()">Mass Delete</button>
     </div>
+    <form id="uploadForm" enctype="multipart/form-data" method="post" action="/admin/upload-customers">
+        <input type="file" name="file" id="fileInput" accept=".csv">
+        <button type="submit">Upload Customers</button>
+    </form>
     <table>
         <thead>
         <tr>
@@ -370,8 +374,8 @@
             <td th:text="${#numbers.formatDecimal(customer.salary, 1, 'COMMA', 2, 'POINT')}"></td>
             <td>
                 <div class="crud-buttons">
-                <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"><i class="fas fa-edit"></i>Update</button>
-                <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"><i class="fas fa-trash-alt"></i>Delete</button>
+                    <button th:onclick="'showUpdateForm(' + ${customer.cif} + ')'"><i class="fas fa-edit"></i>Update</button>
+                    <button th:onclick="'deleteCustomer(' + ${customer.cif} + ')'"><i class="fas fa-trash-alt"></i>Delete</button>
                 </div>
             </td>
         </tr>
@@ -502,16 +506,16 @@
         <h3>Selected Customers</h3>
         <table id="selectedCustomersTable">
             <thead>
-                <tr>
-                    <th>Index</th>
-                    <th>Customer ID</th>
-                    <th>Employee ID</th>
-                    <th>Name</th>
-                    <th>Salary</th>
-                </tr>
+            <tr>
+                <th>Index</th>
+                <th>Customer ID</th>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Salary</th>
+            </tr>
             </thead>
             <tbody>
-                <!-- Selected customers will be populated here -->
+            <!-- Selected customers will be populated here -->
             </tbody>
         </table>
 
@@ -553,16 +557,16 @@
         <h3>Selected Customers</h3>
         <table id="selectedCustomersForDeleteTable">
             <thead>
-                <tr>
-                    <th>Index</th>
-                    <th>Customer ID</th>
-                    <th>Employee ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                </tr>
+            <tr>
+                <th>Index</th>
+                <th>Customer ID</th>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
             </thead>
             <tbody>
-                <!-- Selected customers will be populated here -->
+            <!-- Selected customers will be populated here -->
             </tbody>
         </table>
 
@@ -576,63 +580,63 @@
 <script>
 
 
-function showMassDeleteForm() {
-    const selectedCustomers = getSelectedCustomers();
-    if (selectedCustomers.length === 0) {
-        alert('Please select at least one customer.');
-        return;
+    function showMassDeleteForm() {
+        const selectedCustomers = getSelectedCustomers();
+        if (selectedCustomers.length === 0) {
+            alert('Please select at least one customer.');
+            return;
+        }
+
+        populateSelectedCustomersForDeleteTable(selectedCustomers);
+        document.getElementById('massDeleteModal').style.display = 'block';
     }
 
-    populateSelectedCustomersForDeleteTable(selectedCustomers);
-    document.getElementById('massDeleteModal').style.display = 'block';
-}
-
-function populateSelectedCustomersForDeleteTable(customers) {
-    const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
-    tableBody.innerHTML = '';
-    customers.forEach((customer, index) => {
-        const row = tableBody.insertRow();
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${customer.cif}</td>
-            <td>${customer.empNo}</td>
-            <td>${customer.name}</td>
-            <td>${customer.email}</td>
-        `;
-    });
-}
-
-function hideMassDeleteForm() {
-    document.getElementById('massDeleteModal').style.display = 'none';
-}
-
-document.getElementById('massDeleteForm').onsubmit = function(e) {
-    e.preventDefault();
-
-    const selectedCustomers = getSelectedCustomers();
-
-    if (selectedCustomers.length === 0) {
-        alert('Please select at least one customer to delete.');
-        return;
+    function populateSelectedCustomersForDeleteTable(customers) {
+        const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
+        tableBody.innerHTML = '';
+        customers.forEach((customer, index) => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${customer.cif}</td>
+                <td>${customer.empNo}</td>
+                <td>${customer.name}</td>
+                <td>${customer.email}</td>
+            `;
+        });
     }
 
-    if (confirm(`Are you sure you want to delete ${selectedCustomers.length} customer(s)?`)) {
-        fetch('/admin/customers', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ customerIds: selectedCustomers.map(c => c.cif) })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to delete customers');
-            alert('Customers deleted successfully!');
-            hideMassDeleteForm();
-            refreshCustomerTable();
-        })
-        .catch(error => alert(error.message));
+    function hideMassDeleteForm() {
+        document.getElementById('massDeleteModal').style.display = 'none';
     }
-};
+
+    document.getElementById('massDeleteForm').onsubmit = function(e) {
+        e.preventDefault();
+
+        const selectedCustomers = getSelectedCustomers();
+
+        if (selectedCustomers.length === 0) {
+            alert('Please select at least one customer to delete.');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete ${selectedCustomers.length} customer(s)?`)) {
+            fetch('/admin/customers', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ customerIds: selectedCustomers.map(c => c.cif) })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to delete customers');
+                alert('Customers deleted successfully!');
+                hideMassDeleteForm();
+                refreshCustomerTable();
+            })
+            .catch(error => alert(error.message));
+        }
+    };
 
 </script>
 
@@ -847,6 +851,7 @@ document.getElementById('massDeleteForm').onsubmit = function(e) {
     document.getElementById('searchInput').addEventListener('input', searchCustomers);
 
     function showMassSalaryUpdateForm() {
+        console.log("showMassSalaryUpdateForm called");
         const selectedCustomers = getSelectedCustomers();
         if (selectedCustomers.length === 0) {
             alert('Please select at least one customer.');
@@ -1006,7 +1011,60 @@ function populateSelectedCustomersForDeleteTable(customers) {
             .catch(error => alert(error.message));
         }
     };
+        function showMassSalaryUpdateForm() {
+        console.log("showMassSalaryUpdateForm called");
+        const selectedCustomers = getSelectedCustomers();
+        if (selectedCustomers.length === 0) {
+            alert('Please select at least one customer.');
+            return;
+        }
 
+        populateSelectedCustomersTable(selectedCustomers);
+        document.getElementById('massSalaryUpdateModal').style.display = 'block';
+        openTab(null, 'fixedUpdate'); // Open the first tab by default
+    }
+
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch('/admin/upload-customers', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Upload failed: ${response.status} ${response.statusText}\n${text}`);
+            });
+        }
+        return response.text();
+    })
+    .then(data => {
+        alert('Customers uploaded successfully!');
+        refreshCustomerTable();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(error.message);
+    });
+});
+
+    function populateSelectedCustomersTable(customers) {
+        const tableBody = document.querySelector('#selectedCustomersTable tbody');
+        tableBody.innerHTML = '';
+        customers.forEach((customer, index) => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${customer.cif}</td>
+                <td>${customer.empNo}</td>
+                <td>${customer.name}</td>
+                <td>${customer.salary}</td>
+            `;
+        });
+    }
     // Initial table load
     refreshCustomerTable();
 </script>

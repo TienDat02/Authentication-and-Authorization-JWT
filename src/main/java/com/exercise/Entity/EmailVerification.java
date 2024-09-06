@@ -26,12 +26,17 @@ public class EmailVerification {
     @Getter
     private LocalDateTime expiryDate;
 
+    @Setter
+    @Getter
+    private int attempts;
+
     public EmailVerification() {
     }
     public EmailVerification(String email, String confirmationCode, LocalDateTime expiryDate) {
         this.email = email;
         this.confirmationCode = confirmationCode;
         this.expiryDate = expiryDate;
+        attempts = 0;
     }
 
     public void setPassword(String password) {

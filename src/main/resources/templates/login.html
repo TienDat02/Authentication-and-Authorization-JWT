@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,11 +84,20 @@
         .login-container .forgot-password a:hover {
             text-decoration: underline; /* Gạch chân khi hover */
         }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 <div class="login-container">
     <h2>Login</h2>
+    <!-- Add this error message div -->
+    <div th:if="${param.error}" class="error-message">
+        Invalid username or password.
+    </div>
     <form action="/login" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
