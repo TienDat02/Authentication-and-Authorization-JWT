@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/admin")
@@ -30,9 +32,13 @@ public class AdminCustomerController {
 
     @PostMapping("/add-customer")
     @ResponseBody
-    public ResponseEntity<MyCustomer> createCustomer(@RequestBody MyCustomer customer) {
-        MyCustomer createdCustomer = myCustomerService.createCustomer(customer);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+    public ResponseEntity<?> createCustomer(@RequestBody MyCustomer customer) {
+        try {
+            MyCustomer createdCustomer = myCustomerService.createCustomer(customer);
+            return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Collections.singletonMap("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/customers")
@@ -93,5 +99,16 @@ public class AdminCustomerController {
         List<Long> customerIds = request.get("customerIds");
         myCustomerService.deleteCustomers(customerIds);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/upload-customers")
+    @ResponseBody
+    public ResponseEntity<?> uploadCustomers(@RequestParam("file") MultipartFile file) {
+        try {
+            myCustomerService.processCustomerFile(file);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Collections.singletonMap("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
