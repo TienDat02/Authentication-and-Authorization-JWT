@@ -1,67 +1,98 @@
 package com.exercise.Controller;
 
-
+import com.exercise.Entity.EmailVerification;
+import com.exercise.Entity.MyUser;
+import com.exercise.Repository.EmailVerificationRepository;
 import com.exercise.Repository.MyUserRepository;
+import com.exercise.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 
-
-import java.util.UUID;
-
-
-@Controller
-
+@RestController
 public class ForgotPasswordController {
 
-//    private final JavaMailSender mailSender;
-//
-//    public ForgotPasswordController(JavaMailSender mailSender) {
-//        this.mailSender = mailSender;
-//    }
-//
-//    @PostMapping("/forgot-password")
-//    public String processForgotPassword(@RequestParam("email") String email, Model model) {
-//        if (!checkIfEmailExists(email)) {
-//            model.addAttribute("error", "Email không tồn tại!");
-//            return "forgot-password";
-//        }
-//
-//        String token = UUID.randomUUID().toString();
-//        try {
-//            sendResetPasswordEmail(email, token);
-//            model.addAttribute("message", "Đã gửi email reset mật khẩu! Vui lòng kiểm tra hộp thư.");
-//        } catch (Exception e) {
-//            model.addAttribute("error", "Đã xảy ra lỗi khi gửi email reset mật khẩu.");
-//            System.err.println("Error sending email: " + e.getMessage());
-//        }
-//
-//        return "forgot-password";
-//    }
-//
-//    private boolean checkIfEmailExists(String email) {
-//        return true; // Giả sử email tồn tại
-//    }
-//
-//    private void sendResetPasswordEmail(String email, String token) throws Exception {
-//        String resetPasswordLink = "http://localhost:8080/reset-password?token=" + token;
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(email);
-//        message.setSubject("Reset Password");
-//        message.setText("Để đặt lại mật khẩu, vui lòng nhấn vào đường dẫn sau: " + resetPasswordLink);
-//
-//        try {
-//            mailSender.send(message);
-//        } catch (Exception e) {
-//            System.err.println("Error sending email: " + e.getMessage());
-//            throw e;
-//        }
-//    }
-}
+    @Autowired
+    private MyUserRepository myUserRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmailVerificationRepository emailVerificationRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        // Kiểm tra email tồn tại trong hệ thống
+
+        if (myUserRepository.findByEmail(email).isEmpty()) {
+            return ResponseEntity.badRequest().body("Email not exists");
+        }
+
+        Optional<EmailVerification> existingVerification = emailVerificationRepository.findByEmail(email);
+        existingVerification.ifPresent(emailVerification -> emailVerificationRepository.delete(emailVerification));
+        // Gửi mã xác minh qua email
+        String verificationCode = generateVerificationCode();
+
+        // Save verification code to database
+        EmailVerification emailVerification = new EmailVerification(email, verificationCode, LocalDateTime.now().plusHours(24));
+        emailVerificationRepository.save(emailVerification);
+
+        // Send verification email
+        emailService.sendVerificationEmail(email,verificationCode);
+
+
+        return ResponseEntity.ok("Verification code sent to your email");
+    }
+
+
+    @PutMapping("/reset-password")
+    @ResponseBody
+    public ResponseEntity<?> resetPassword(@RequestParam String email,
+                                           @RequestParam String code,
+                                           @RequestParam String newPassword,
+                                           @RequestParam String confirmPassword) {
+        if (!newPassword.equals(confirmPassword)) {
+            return ResponseEntity.badRequest().body("New password and confirm password do not match.");
+        }
+
+        // Kiểm tra mã xác minh
+        EmailVerification verification = emailVerificationRepository.findByEmail(email)
+                .orElse(null);
+        if (verification == null || !Objects.equals(verification.getConfirmationCode(), code)) {
+            return ResponseEntity.badRequest().body("Invalid verification code");
+        }
+
+
+        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Verification code has expired");
+        }
+
+        // Kiểm tra email người dùng tồn tại
+        Optional<MyUser> userOptional = myUserRepository.findByEmail(email);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.badRequest().body("Email does not exist.");
+        }
+
+        // Cập nhật mật khẩu mới
+        MyUser user = userOptional.get();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        myUserRepository.save(user);
+
+        return ResponseEntity.ok("Password has been successfully updated.");
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(1000000));
+    }
+}

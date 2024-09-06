@@ -33,40 +33,35 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-
                 .authorizeHttpRequests(re -> {
-                    re.requestMatchers("/js/**", "/css/**", "/images/**").permitAll(); // Add this line
-                    re.requestMatchers("/home", "/forgot-password/**", "/register/**", "/login", "/authenticate", "/verify").permitAll();
-                    re.requestMatchers("/admin/**").hasRole("ADMIN");
-                    re.requestMatchers("/user/customer-management").hasAuthority("PERMISSION_READ");
-                    re.requestMatchers("/user/create-customer").hasAuthority("PERMISSION_CREATE");
-                    re.requestMatchers("/user/**").hasRole("USER");
-                    re.anyRequest().authenticated();
-                })
+            re.requestMatchers("/home", "/forgot-password/**" ,"/reset-password","/register/**", "/login", "/authenticate", "/verify").permitAll();
+            re.requestMatchers("/admin/**").hasRole("ADMIN");
+            re.requestMatchers("/user/customer-management").hasAuthority("PERMISSION_READ");
+            re.requestMatchers("/user/create-customer").hasAuthority("PERMISSION_CREATE");
+            re.requestMatchers("/user/**").hasRole("USER");
+            re.anyRequest().authenticated();
+        })
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer.loginPage("/login")
                             .successHandler(new AuthenticationSuccessHandler())
-                            .failureUrl("/login?error=true") // Add this line
                             .permitAll();
                 })
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"))
+                        .deleteCookies("JSESSIONID")
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    // UserDetails normalUser =
-    // User.builder().username("user").password("$2a$12$UGWxPhaRBlnZcGahorrpSONz6VPLHt4fFgidD5nCO8O6.C7f5WUXi").roles("USER").build();
-    // UserDetails adminUser =
-    // User.builder().username("admin").password("$2a$12$UGWxPhaRBlnZcGahorrpSONz6VPLHt4fFgidD5nCO8O6.C7f5WUXi").roles("ADMIN",
-    // "USER").build();
-    // return new InMemoryUserDetailsManager(normalUser, adminUser);
-    // }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails normalUser = User.builder().username("user").password("$2a$12$UGWxPhaRBlnZcGahorrpSONz6VPLHt4fFgidD5nCO8O6.C7f5WUXi").roles("USER").build();
+//        UserDetails adminUser = User.builder().username("admin").password("$2a$12$UGWxPhaRBlnZcGahorrpSONz6VPLHt4fFgidD5nCO8O6.C7f5WUXi").roles("ADMIN", "USER").build();
+//        return new InMemoryUserDetailsManager(normalUser, adminUser);
+//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
