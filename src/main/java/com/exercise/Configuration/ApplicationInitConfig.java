@@ -38,7 +38,7 @@ public class ApplicationInitConfig {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
-                MyUser newUser = new MyUser(ADMIN_USER_NAME, passwordEncoder.encode(ADMIN_PASSWORD), "");
+                MyUser newUser = new MyUser(ADMIN_USER_NAME, "" ,passwordEncoder.encode(ADMIN_PASSWORD));
                 newUser.addRole("ADMIN");
                 newUser.setPermissions(Set.of("READ", "UPDATE","CREATE", "DELETE"));
                 userRepository.save(newUser);

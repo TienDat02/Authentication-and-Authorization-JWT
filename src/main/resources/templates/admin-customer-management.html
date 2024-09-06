@@ -960,20 +960,7 @@ function populateSelectedCustomersForDeleteTable(customers) {
         document.getElementById('massDeleteModal').style.display = 'block';
     }
 
-    function populateSelectedCustomersForDeleteTable(customers) {
-        const tableBody = document.querySelector('#selectedCustomersForDeleteTable tbody');
-        tableBody.innerHTML = '';
-        customers.forEach((customer, index) => {
-            const row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${customer.cif}</td>
-                <td>${customer.empNo}</td>
-                <td>${customer.name}</td>
-                <td>${customer.email}</td>
-            `;
-        });
-    }
+
 
     function hideMassDeleteForm() {
         document.getElementById('massDeleteModal').style.display = 'none';

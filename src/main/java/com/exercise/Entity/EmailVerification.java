@@ -6,7 +6,8 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-
+@Setter
+@Getter
 @Entity
 public class EmailVerification {
     @Id
@@ -14,16 +15,13 @@ public class EmailVerification {
     private Long id;
 
     @Column(unique = true)
-    @Setter
-    @Getter
+
     private String email;
 
-    @Setter
-    @Getter
+
     private String confirmationCode;
 
-    @Setter
-    @Getter
+
     private LocalDateTime expiryDate;
 
     public EmailVerification() {

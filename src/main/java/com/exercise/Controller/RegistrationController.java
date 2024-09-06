@@ -37,7 +37,7 @@ public class RegistrationController {
             return ResponseEntity.badRequest().body("Passwords do not match");
         }
 
-        // Check if username already exists
+        // Check if username already  exists
         if (myUserRepository.findByUsername(username).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
