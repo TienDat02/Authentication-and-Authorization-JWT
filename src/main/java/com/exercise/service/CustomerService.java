@@ -15,4 +15,6 @@ public interface CustomerService {
     void processCustomerFile(MultipartFile file) throws Exception;
     void deleteCustomer(long cif);
     void deleteCustomers(List<Long> customerIds);
+
+    void processCustomerFile(MultipartFile file) throws Exception;
 }

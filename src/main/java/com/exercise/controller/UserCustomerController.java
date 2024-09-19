@@ -2,9 +2,6 @@ package com.exercise.controller;
 
 import com.exercise.entity.MyCustomer;
 import com.exercise.service.CustomerService;
-import com.exercise.service.CustomerServiceImpl;
-import com.exercise.service.CustomerServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,8 +18,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserCustomerController {
 
-    @Autowired
-    private CustomerService customerServiceImpl;
+    private final CustomerService customerService;
+
+    public UserCustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping("/home")
     @PreAuthorize("hasRole('USER')")
@@ -33,7 +33,7 @@ public class UserCustomerController {
     @GetMapping("/customer-management")
     @PreAuthorize("hasRole('USER')")
     public String handleUserCustomerManagement(Model model, Authentication authentication) {
-        List<MyCustomer> customers = customerServiceImpl.getAllCustomers();
+        List<MyCustomer> customers = customerService.getAllCustomers();
         model.addAttribute("customers", customers);
 
         // Add user permissions to the model
@@ -51,7 +51,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_READ')")
     public ResponseEntity<List<MyCustomer>> getUserCustomers() {
-        List<MyCustomer> customers = customerServiceImpl.getAllCustomers();
+        List<MyCustomer> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
@@ -59,7 +59,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_READ')")
     public ResponseEntity<MyCustomer> getUserCustomerByCif(@PathVariable long cif) {
-        Optional<MyCustomer> customer = customerServiceImpl.getCustomerByCif(cif);
+        Optional<MyCustomer> customer = customerService.getCustomerByCif(cif);
         return customer.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -68,7 +68,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_CREATE')")
     public ResponseEntity<MyCustomer> createUserCustomer(@RequestBody MyCustomer customer) {
-        MyCustomer createdCustomer = customerServiceImpl.createCustomer(customer);
+        MyCustomer createdCustomer = customerService.createCustomer(customer);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
@@ -79,7 +79,7 @@ public class UserCustomerController {
         if (cif != customer.getCif()) {
             return ResponseEntity.badRequest().build();
         }
-        MyCustomer updatedCustomer = customerServiceImpl.updateCustomer(customer);
+        MyCustomer updatedCustomer = customerService.updateCustomer(customer);
         return ResponseEntity.ok(updatedCustomer);
     }
 
@@ -90,7 +90,7 @@ public class UserCustomerController {
         if (cif == 0) {
             return ResponseEntity.badRequest().build();
         }
-        customerServiceImpl.deleteCustomer(cif);
+        customerService.deleteCustomer(cif);
         return ResponseEntity.noContent().build();
     }
     @DeleteMapping("/customers")
@@ -98,7 +98,7 @@ public class UserCustomerController {
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_DELETE')")
     public ResponseEntity<Void> deleteCustomers(@RequestBody Map<String, List<Long>> request) {
         List<Long> customerIds = request.get("customerIds");
-        customerServiceImpl.deleteCustomers(customerIds);
+        customerService.deleteCustomers(customerIds);
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/mass-salary-update")
@@ -111,7 +111,7 @@ public class UserCustomerController {
         String updateType = (String) request.get("updateType");
         double amount = ((Number) request.get("amount")).doubleValue();
 
-        List<MyCustomer> updatedCustomers = customerServiceImpl.updateSalaries(customerIds, updateType, amount);
+        List<MyCustomer> updatedCustomers = customerService.updateSalaries(customerIds, updateType, amount);
         return ResponseEntity.ok(updatedCustomers);
     }
 }
