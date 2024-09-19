@@ -1,7 +1,9 @@
 package com.exercise.controller;
 
 import com.exercise.entity.MyCustomer;
-import com.exercise.service.CustomerServiceIpml;
+import com.exercise.service.CustomerService;
+import com.exercise.service.CustomerServiceImpl;
+import com.exercise.service.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 public class UserCustomerController {
 
     @Autowired
-    private CustomerServiceIpml customerServiceIpml;
+    private CustomerService customerServiceImpl;
 
     @GetMapping("/home")
     @PreAuthorize("hasRole('USER')")
@@ -31,7 +33,7 @@ public class UserCustomerController {
     @GetMapping("/customer-management")
     @PreAuthorize("hasRole('USER')")
     public String handleUserCustomerManagement(Model model, Authentication authentication) {
-        List<MyCustomer> customers = customerServiceIpml.getAllCustomers();
+        List<MyCustomer> customers = customerServiceImpl.getAllCustomers();
         model.addAttribute("customers", customers);
 
         // Add user permissions to the model
@@ -49,7 +51,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_READ')")
     public ResponseEntity<List<MyCustomer>> getUserCustomers() {
-        List<MyCustomer> customers = customerServiceIpml.getAllCustomers();
+        List<MyCustomer> customers = customerServiceImpl.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
@@ -57,7 +59,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_READ')")
     public ResponseEntity<MyCustomer> getUserCustomerByCif(@PathVariable long cif) {
-        Optional<MyCustomer> customer = customerServiceIpml.getCustomerByCif(cif);
+        Optional<MyCustomer> customer = customerServiceImpl.getCustomerByCif(cif);
         return customer.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -66,7 +68,7 @@ public class UserCustomerController {
     @ResponseBody
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_CREATE')")
     public ResponseEntity<MyCustomer> createUserCustomer(@RequestBody MyCustomer customer) {
-        MyCustomer createdCustomer = customerServiceIpml.createCustomer(customer);
+        MyCustomer createdCustomer = customerServiceImpl.createCustomer(customer);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
@@ -77,7 +79,7 @@ public class UserCustomerController {
         if (cif != customer.getCif()) {
             return ResponseEntity.badRequest().build();
         }
-        MyCustomer updatedCustomer = customerServiceIpml.updateCustomer(customer);
+        MyCustomer updatedCustomer = customerServiceImpl.updateCustomer(customer);
         return ResponseEntity.ok(updatedCustomer);
     }
 
@@ -88,7 +90,7 @@ public class UserCustomerController {
         if (cif == 0) {
             return ResponseEntity.badRequest().build();
         }
-        customerServiceIpml.deleteCustomer(cif);
+        customerServiceImpl.deleteCustomer(cif);
         return ResponseEntity.noContent().build();
     }
     @DeleteMapping("/customers")
@@ -96,7 +98,7 @@ public class UserCustomerController {
     @PreAuthorize("hasRole('USER') and hasAuthority('PERMISSION_DELETE')")
     public ResponseEntity<Void> deleteCustomers(@RequestBody Map<String, List<Long>> request) {
         List<Long> customerIds = request.get("customerIds");
-        customerServiceIpml.deleteCustomers(customerIds);
+        customerServiceImpl.deleteCustomers(customerIds);
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/mass-salary-update")
@@ -109,7 +111,7 @@ public class UserCustomerController {
         String updateType = (String) request.get("updateType");
         double amount = ((Number) request.get("amount")).doubleValue();
 
-        List<MyCustomer> updatedCustomers = customerServiceIpml.updateSalaries(customerIds, updateType, amount);
+        List<MyCustomer> updatedCustomers = customerServiceImpl.updateSalaries(customerIds, updateType, amount);
         return ResponseEntity.ok(updatedCustomers);
     }
 }

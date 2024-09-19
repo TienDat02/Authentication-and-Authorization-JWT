@@ -17,11 +17,11 @@ import java.util.Optional;
 
 
 @Service
-public class CustomerServiceIpml implements CustomerService {
+public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private MyCustomerRepository myCustomerRepository;
 
-    public CustomerServiceIpml(MyCustomerRepository myCustomerRepository) {
+    public CustomerServiceImpl(MyCustomerRepository myCustomerRepository) {
         this.myCustomerRepository = myCustomerRepository;
     }
 

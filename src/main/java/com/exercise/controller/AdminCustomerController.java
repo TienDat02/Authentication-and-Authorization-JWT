@@ -1,6 +1,9 @@
 package com.exercise.controller;
 
+import com.exercise.dto.response.ApiResponse;
 import com.exercise.entity.MyCustomer;
+import com.exercise.exception.ErrorCode;
+import com.exercise.exception.SalaryException;
 import com.exercise.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.exercise.exception.ErrorCode.INVALID_DATA_FORMAT;
+import static com.exercise.exception.ErrorCode.UNEXPECTED_ERROR;
 
 @Controller
 @RequestMapping("/admin")
@@ -66,15 +72,32 @@ public class AdminCustomerController {
 
     @PostMapping("/mass-salary-update")
     @ResponseBody
-    public ResponseEntity<List<MyCustomer>> massSalaryUpdate(@RequestBody Map<String, Object> request) {
-        List<Long> customerIds = ((List<String>) request.get("customerIds")).stream()
-                .map(Long::parseLong)
-                .collect(Collectors.toList());
-        String updateType = (String) request.get("updateType");
-        double amount = ((Number) request.get("amount")).doubleValue();
+    public ResponseEntity<ApiResponse> massSalaryUpdate(@RequestBody Map<String, Object> request) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<Long> customerIds = ((List<String>) request.get("customerIds")).stream()
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            String updateType = (String) request.get("updateType");
+            Object amountObj = request.get("amount");
+            double amount;
+            // Kiểm tra và chuyển đổi kiểu dữ liệu của amountObj
+            if (amountObj instanceof Number) {
+                amount = ((Number) amountObj).doubleValue();
+            } else {
+                throw new SalaryException(ErrorCode.INVALID_DATA_FORMAT);
+            }
 
-        List<MyCustomer> updatedCustomers = customerService.updateSalaries(customerIds, updateType, amount);
-        return ResponseEntity.ok(updatedCustomers);
+            List<MyCustomer> updatedCustomers = customerService.updateSalaries(customerIds, updateType, amount);
+            return ResponseEntity.ok(new ApiResponse(1000, "success", updatedCustomers));
+
+        } catch (SalaryException e) {
+            return ResponseEntity.status(e.getErrorCode().getStatusCode())
+                    .body(new ApiResponse(e.getErrorCode().getCode(), e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode())
+                    .body(new ApiResponse(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode(), e.getMessage(), null));
+        }
     }
 
     @DeleteMapping("/customers/{cif}")
