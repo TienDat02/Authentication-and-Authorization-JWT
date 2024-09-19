@@ -1,4 +1,4 @@
-package com.exercise.Controller;
+package com.exercise.controller;
 
 import com.exercise.Model.MyUser;
 import com.exercise.Model.MyUserRepository;
