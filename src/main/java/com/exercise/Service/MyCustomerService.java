@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @Service
 public class MyCustomerService {
     @Autowired
@@ -95,6 +97,7 @@ public class MyCustomerService {
                 customers.add(customer);
             }
         }
+
         // Save all customers
         myCustomerRepository.saveAll(customers);
     }
