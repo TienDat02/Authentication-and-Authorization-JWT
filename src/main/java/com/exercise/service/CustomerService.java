@@ -1,6 +1,8 @@
 package com.exercise.service;
 
 import com.exercise.entity.MyCustomer;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +14,6 @@ public interface CustomerService {
     List<MyCustomer> updateSalaries(List<Long> customerIds, String updateType, double amount);
     void deleteCustomer(long cif);
     void deleteCustomers(List<Long> customerIds);
+
+    void processCustomerFile(MultipartFile file) throws Exception;
 }
